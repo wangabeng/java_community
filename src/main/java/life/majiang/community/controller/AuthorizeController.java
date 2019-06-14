@@ -21,7 +21,7 @@ public class AuthorizeController {
 		// 创建GithubProvider类 发送post请求
 		AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
 		// String jsonStr = "{'client_id': '840e14b3990e1a66b140','client_secret': 'f0bbc0eecef590d7abbd24515320573630701364'}";
-		accessTokenDTO.setClient_id("'840e14b3990e1a66b140'");
+		accessTokenDTO.setClient_id("840e14b3990e1a66b140");
 		accessTokenDTO.setClient_secret("f0bbc0eecef590d7abbd24515320573630701364");
 		accessTokenDTO.setCode(code);
 		githubProvider.getAccessToken(accessTokenDTO);
