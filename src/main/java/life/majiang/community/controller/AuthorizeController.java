@@ -1,6 +1,8 @@
 package life.majiang.community.controller;
 
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -22,7 +24,11 @@ public class AuthorizeController {
 	private String clientSecret;
 	
 	@GetMapping("/callback")
-	public String callback (@RequestParam(name = "code") String code) {
+	public String callback (
+			@RequestParam(name = "code") String code,
+			// @RequestParam(name = "state") String state,
+			HttpServletRequest request
+			) {
 		// 跳转携带code的时候返回
 		// System.out.println(code);
 		
@@ -42,6 +48,16 @@ public class AuthorizeController {
 		// System.out.print(user.getName()); //  成功
 		// System.out.print("end--------");
 		
-		return "index";
+		// 获取到user信息后存到session中
+		if (user != null) {
+			request.getSession().setAttribute("user", user);
+			System.out.print("redirect index--------");
+			return "redirect:/";
+		} else { // 登录失败 重新登录
+			return "redirect:/";
+		}
+		
+		
+		// return "index";
 	}
 }
