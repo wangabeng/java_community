@@ -5,11 +5,12 @@
 
 </head>
 <body>
-    <div th:if="${session.user == null}" class="code-wrapper">
-        <a href='https://github.com/login/oauth/authorize?client_id=840e14b3990e1a66b140&redirect_uri=http://localhost:8007/callback'>授权登录</a>
+    <div class="code-wrapper">
+        <a  th:if="${session.user == null}" href='https://github.com/login/oauth/authorize?client_id=840e14b3990e1a66b140&redirect_uri=http://localhost:8007/callback'>授权登录</a>
+    	<p th:if="${session.user!=null}"  th:text="欢迎您 + ${session.user.getName()}"></p>
     </div>
 
-		<p th:if="${session.user!=null}"  th:text="欢迎您 + ${session.user.getName()}"></p>
+		
 
 </body>
 

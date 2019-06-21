@@ -1,6 +1,8 @@
 package life.majiang.community.controller;
 
 
+import java.util.UUID;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +13,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import life.majiang.community.dto.AccessTokenDTO;
 import life.majiang.community.dto.GithubUser;
+import life.majiang.community.mapper.UserMapper;
+import life.majiang.community.model.User;
 import life.majiang.community.provider.GithubProvider;
 
 @Controller
 public class AuthorizeController {
 	@Autowired
 	private GithubProvider githubProvider; // 自动注入类
+	
+	@Autowired
+	private UserMapper userMapper;
 	
 	@Value("${github.client.id}")
 	private String clientId;
@@ -43,14 +50,27 @@ public class AuthorizeController {
 		String acessToken = githubProvider.getAccessToken(accessTokenDTO);
 		
 		// 获取用户信息
-		GithubUser user = githubProvider.getUser(acessToken);
+		GithubUser githubUser = githubProvider.getUser(acessToken);
 		// System.out.print("beigin--------");
 		// System.out.print(user.getName()); //  成功
 		// System.out.print("end--------");
 		
 		// 获取到user信息后存到session中
-		if (user != null) {
-			request.getSession().setAttribute("user", user);
+		if (githubUser != null) {
+			// 创建user实体类并修改实体类值
+			User user = new User();
+			user.setToken(UUID.randomUUID().toString());
+			user.setName(githubUser.getName());
+			user.setAccountId(String.valueOf(githubUser.getId()));
+			user.setGmtCreate(System.currentTimeMillis());
+			user.setGmtModified(user.getGmtCreate());
+			
+			System.out.print("插入数据前--------");
+			userMapper.insert(user);
+			System.out.print("插入数据后--------");
+			
+			// 设置session
+			request.getSession().setAttribute("user", githubUser);
 			System.out.print("redirect index--------");
 			return "redirect:/";
 		} else { // 登录失败 重新登录
