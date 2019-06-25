@@ -3,7 +3,9 @@ package life.majiang.community.controller;
 
 import java.util.UUID;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +36,8 @@ public class AuthorizeController {
 	public String callback (
 			@RequestParam(name = "code") String code,
 			// @RequestParam(name = "state") String state,
-			HttpServletRequest request
+			HttpServletRequest request,
+			HttpServletResponse response
 			) {
 		// 跳转携带code的时候返回
 		// System.out.println(code);
@@ -59,18 +62,21 @@ public class AuthorizeController {
 		if (githubUser != null) {
 			// 创建user实体类并修改实体类值
 			User user = new User();
-			user.setToken(UUID.randomUUID().toString());
+			// 存储token
+			String token = UUID.randomUUID().toString();
+			user.setToken(token);
 			user.setName(githubUser.getName());
 			user.setAccountId(String.valueOf(githubUser.getId()));
 			user.setGmtCreate(System.currentTimeMillis());
 			user.setGmtModified(user.getGmtCreate());
-			
 			System.out.print("插入数据前--------");
 			userMapper.insert(user);
 			System.out.print("插入数据后--------");
 			
+			// 设置cookie
+			response.addCookie(new Cookie("token", token));
 			// 设置session
-			request.getSession().setAttribute("user", githubUser);
+			// request.getSession().setAttribute("user", githubUser);
 			System.out.print("redirect index--------");
 			return "redirect:/";
 		} else { // 登录失败 重新登录

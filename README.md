@@ -1,2 +1,2 @@
-# java_community
-spring boot community 
+# 空指针异常 卡了几天的问题
+解决方案，先判断其是否存在，然后再调用之。
